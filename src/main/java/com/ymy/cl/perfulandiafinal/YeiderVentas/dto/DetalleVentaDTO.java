@@ -1,0 +1,18 @@
+package com.ymy.cl.perfulandiafinal.YeiderVentas.dto;
+
+import com.ymy.cl.perfulandiafs.ventas.model.DetalleVenta;
+import lombok.Data;
+
+@Data
+public class DetalleVentaDTO {
+    private Long id;
+    private Integer cantidad;
+    private double precioUnitario;
+
+    // Constructor que mapea la entidad DetalleVenta a DetalleVentaDTO
+    public DetalleVentaDTO(DetalleVenta detalleVenta) {
+        this.id = detalleVenta.getId();
+        this.cantidad = detalleVenta.getCantidad();
+        this.precioUnitario = detalleVenta.getPrecioUnitario();
+    }
+}
