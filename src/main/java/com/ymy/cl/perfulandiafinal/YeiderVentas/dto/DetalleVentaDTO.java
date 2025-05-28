@@ -1,6 +1,6 @@
 package com.ymy.cl.perfulandiafinal.YeiderVentas.dto;
 
-import com.ymy.cl.perfulandiafs.ventas.model.DetalleVenta;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.model.DetalleVenta;
 import lombok.Data;
 
 @Data

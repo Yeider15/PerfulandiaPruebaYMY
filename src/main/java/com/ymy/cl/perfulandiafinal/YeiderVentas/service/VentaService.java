@@ -40,7 +40,7 @@ public class VentaService {
                 detalleVentaRepository.save(detalle);
 
                 // Actualizamos el stock
-                actualizarStock(detalle.getPerfume().getId(), detalle.getCantidad());
+                actualizarStock(detalle.getPerfumeModel().getId(), detalle.getCantidad());
             }
 
             return "Venta registrada con éxito";
@@ -85,7 +85,7 @@ public class VentaService {
         int nuevoStock = perfumeModel.getStock() - cantidadVendida;
 
         if (nuevoStock < 0) {
-            throw new RuntimeException("No hay suficiente stock para el perfume: " + perfume.getNombre());
+            throw new RuntimeException("No hay suficiente stock para el perfume: " + perfumeModel.getNombre());
         }
 
         perfumeModel.setStock(nuevoStock);
