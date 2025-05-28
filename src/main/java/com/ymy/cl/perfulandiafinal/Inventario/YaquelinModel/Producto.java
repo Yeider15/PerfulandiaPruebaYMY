@@ -1,4 +1,4 @@
-package com.ymy.cl.perfulandiafinal.Inventario.model;
+package com.ymy.cl.perfulandiafinal.Inventario.YaquelinModel;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,11 +9,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "perfume")
+@Table(name = "producto")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PerfumeModel {
+public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id ;
@@ -38,5 +38,4 @@ public class PerfumeModel {
 
     @Column(nullable = false)
     private Date fechaIngreso;
-
 }
