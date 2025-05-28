@@ -1,6 +1,6 @@
 package com.ymy.cl.perfulandiafinal.YeiderVentas.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.ymy.cl.perfulandiafinal.Inventario.model.PerfumeModel;
+import com.ymy.cl.perfulandiafinal.Inventario.YaquelinModel.Producto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class DetalleVenta {
 
     @ManyToOne
     @JoinColumn(name = "id_producto", referencedColumnName = "id")
-    private PerfumeModel perfumeModel; // Relación con Perfume
+    private Producto productoModel; // Relación con Perfume
 
 
 }

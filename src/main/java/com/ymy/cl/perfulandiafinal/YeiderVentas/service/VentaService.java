@@ -1,7 +1,7 @@
 package com.ymy.cl.perfulandiafinal.YeiderVentas.service;
 
-import com.ymy.cl.perfulandiafinal.Inventario.model.PerfumeModel;
-import com.ymy.cl.perfulandiafinal.Inventario.repository.PerfumeRepository;
+import com.ymy.cl.perfulandiafinal.Inventario.YaquelinModel.Producto;
+import com.ymy.cl.perfulandiafinal.Inventario.YaquelinRepository.ProductoRepository;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.DetalleVentaDTO;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.DetalleVenta;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
@@ -25,7 +25,7 @@ public class VentaService {
     private DetalleVentaRepository detalleVentaRepository;
 
     @Autowired
-    private PerfumeRepository perfumeRepository;
+    private ProductoRepository productoRepository;
 
     public String crearVenta(Venta venta) {
         try {
@@ -40,7 +40,7 @@ public class VentaService {
                 detalleVentaRepository.save(detalle);
 
                 // Actualizamos el stock
-                actualizarStock(detalle.getPerfumeModel().getId(), detalle.getCantidad());
+                actualizarStock(detalle.getProductoModel().getId(), detalle.getCantidad());
             }
 
             return "Venta registrada con éxito";
@@ -80,16 +80,16 @@ public class VentaService {
 
     // Actualizar el stock de un perfume después de la venta
     private void actualizarStock(Integer perfumeId, int cantidadVendida) {
-        PerfumeModel perfumeModel = perfumeRepository.findById(perfumeId)
+        Producto productoModel = productoRepository.findById(perfumeId)
                 .orElseThrow(() -> new RuntimeException("Perfume no encontrado"));
-        int nuevoStock = perfumeModel.getStock() - cantidadVendida;
+        int nuevoStock = productoModel.getStock() - cantidadVendida;
 
         if (nuevoStock < 0) {
-            throw new RuntimeException("No hay suficiente stock para el perfume: " + perfumeModel.getNombre());
+            throw new RuntimeException("No hay suficiente stock para el perfume: " + productoModel.getNombre());
         }
 
-        perfumeModel.setStock(nuevoStock);
-        perfumeRepository.save(perfumeModel);  // Guardamos el perfume actualizado
+        productoModel.setStock(nuevoStock);
+        productoRepository.save(productoModel);  // Guardamos el perfume actualizado
     }
 
 }

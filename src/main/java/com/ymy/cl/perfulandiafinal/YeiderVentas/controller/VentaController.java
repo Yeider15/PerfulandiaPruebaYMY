@@ -1,8 +1,9 @@
 package com.ymy.cl.perfulandiafinal.YeiderVentas.controller;
 
-import com.ymy.cl.perfulandiafs.ventas.dto.DetalleVentaDTO;
-import com.ymy.cl.perfulandiafs.ventas.model.Venta;
-import com.ymy.cl.perfulandiafs.ventas.service.VentaService;
+
+import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.DetalleVentaDTO;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.service.VentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
