@@ -1,7 +1,7 @@
 package com.ymy.cl.perfulandiafinal.MariaUsuario.model;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

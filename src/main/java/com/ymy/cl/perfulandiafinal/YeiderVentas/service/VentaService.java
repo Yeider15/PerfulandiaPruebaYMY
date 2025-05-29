@@ -1,21 +1,26 @@
 package com.ymy.cl.perfulandiafinal.YeiderVentas.service;
 
-import com.ymy.cl.perfulandiafinal.Inventario.YaquelinModel.Producto;
-import com.ymy.cl.perfulandiafinal.Inventario.YaquelinRepository.ProductoRepository;
-import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.DetalleVentaDTO;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.response.DetalleVentaQueryDTO;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.DetalleVenta;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
-import com.ymy.cl.perfulandiafinal.YeiderVentas.repository.DetalleVentaRepository;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.request.VentaRequestDTO;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.request.DetalleVentaRequestDTO;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.dto.response.VentaDTO;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.repository.VentaRepository;
-import jakarta.transaction.Transactional;
+import com.ymy.cl.perfulandiafinal.YeiderVentas.repository.DetalleVentaRepository;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.service.UsuarioService;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
+import com.ymy.cl.perfulandiafinal.Inventario.YaquelinService.ProductoService;
+import com.ymy.cl.perfulandiafinal.Inventario.YaquelinModel.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class VentaService {
 
     @Autowired
@@ -25,71 +30,105 @@ public class VentaService {
     private DetalleVentaRepository detalleVentaRepository;
 
     @Autowired
-    private ProductoRepository productoRepository;
+    private UsuarioService usuarioService;
 
-    public String crearVenta(Venta venta) {
-        try {
-            // Guardamos la venta
-            Venta nuevaVenta = ventaRepository.save(venta);
+    @Autowired
+    private ProductoService productoService;
 
-            // Guardamos los detalles de la venta
-            for (DetalleVenta detalle : venta.getDetalleVentas()) {
-                detalle.setVenta(nuevaVenta);  // Asociamos el detalle a la venta
+    // Método para crear una venta
+    @Transactional
+    public String crearVenta(VentaRequestDTO ventaRequestDTO) {
+        // Obtener el usuario que realizó la venta
+        Usuario usuario = usuarioService.findById(ventaRequestDTO.getUsuarioId().intValue()); // Aseguramos que sea Integer
 
-                // Guardamos el detalle
-                detalleVentaRepository.save(detalle);
+        // Crear la instancia de Venta
+        Venta venta = new Venta();
+        venta.setFechaVenta(new Date());
+        venta.setEstado(ventaRequestDTO.getEstado());
+        venta.setTotal(ventaRequestDTO.getTotal());
+        venta.setUsuario(usuario);
 
-                // Actualizamos el stock
-                actualizarStock(detalle.getProductoModel().getId(), detalle.getCantidad());
-            }
+        // Inicializar la lista de detalles de venta
+        List<DetalleVenta> detalleVentas = new ArrayList<>();
 
-            return "Venta registrada con éxito";
-        } catch (Exception e) {
-            // Registra el error y lanza una excepción controlada
-            e.printStackTrace();
-            throw new RuntimeException("Error al registrar la venta: " + e.getMessage());
+        // Crear y guardar los detalles de la venta
+        for (DetalleVentaRequestDTO detalleDTO : ventaRequestDTO.getDetallesVenta()) {
+            DetalleVenta detalleVenta = new DetalleVenta();
+
+            // Obtener el producto relacionado con el detalle
+            Producto producto = productoService.findById(detalleDTO.getProductoId().intValue()); // Aseguramos que sea Integer
+
+            // Setear los detalles de la venta
+            detalleVenta.setCantidad(detalleDTO.getCantidad());
+            detalleVenta.setPrecioUnitario(detalleDTO.getPrecioUnitario());
+            detalleVenta.setProductoModel(producto);
+            detalleVenta.setVenta(venta); // Asociar el detalle con la venta
+
+            // Añadir el detalle a la lista
+            detalleVentas.add(detalleVenta);
+
+            // Actualizar el stock del producto
+            productoService.updateStock(producto.getId(), detalleDTO.getCantidad());
         }
+
+        // Asignar la lista de detalles a la venta
+        venta.setDetalleVentas(detalleVentas);
+
+        // Guardar la venta con los detalles asociados
+        ventaRepository.save(venta);  // Esto debería guardar correctamente la venta y los detalles
+
+        return "Venta creada con éxito";
     }
 
 
-    public List<Venta> obtenerVentas() {
-        return ventaRepository.findAll();
+
+    // Método para obtener todas las ventas
+    public List<VentaDTO> findAllVentas() {
+        List<VentaDTO> ventasDTO = new ArrayList<>();
+        List<Venta> ventas = ventaRepository.findAll(); // Obtener todas las ventas
+
+        for (Venta venta : ventas) {
+            ventasDTO.add(new VentaDTO(venta)); // Convertir cada venta a DTO
+        }
+
+        return ventasDTO;
     }
 
-    public List<DetalleVentaDTO> obtenerDetallesDeVentaID(Long ventaId) {
-        // Obtener los detalles de la venta desde el repositorio
-        List<DetalleVenta> detalles = detalleVentaRepository.findByVentaId(ventaId);
-
-        // Imprimir detalles para verificar que la entidad está siendo recuperada correctamente
-        detalles.forEach(detalle -> System.out.println(detalle.getId())); // Agrega un log de depuración
-
-        // Convertir las entidades DetalleVenta a DTO
-        return detalles.stream()
-                .map(DetalleVentaDTO::new)
-                .collect(Collectors.toList());  // Recoger los DTOs en una lista
+    // Método para obtener una venta por su ID
+    public VentaDTO findVentaById(Long id) {
+        Venta venta = ventaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+        return new VentaDTO(venta); // Convertir la entidad Venta a DTO
     }
 
+    // Método para actualizar el estado de una venta
+    public String actualizarEstado(Long id, String estado) {
+        Venta venta = ventaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+        venta.setEstado(estado);
+        ventaRepository.save(venta); // Guardar la venta con el nuevo estado
+        return "Estado de la venta actualizado con éxito";
+    }
 
+    // Método para obtener ventas por estado
+    public List<VentaDTO> findVentasByEstado(String estado) {
+        List<Venta> ventas = ventaRepository.findByEstado(estado); // Buscar ventas por estado
+        List<VentaDTO> ventasDTO = new ArrayList<>();
+
+        for (Venta venta : ventas) {
+            ventasDTO.add(new VentaDTO(venta)); // Convertir cada venta a DTO
+        }
+
+        return ventasDTO;
+    }
+
+    // Método para eliminar una venta por su ID
     public String eliminarVenta(Long id) {
-        if (!ventaRepository.existsById(id)) {
-            throw new RuntimeException("Venta no encontrada");
-        }
-        ventaRepository.deleteById(id);
-        return "Venta anulada con éxito";
+        Venta venta = ventaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
+        ventaRepository.delete(venta);  // Eliminar la venta de la base de datos
+        return "Venta eliminada con éxito";
     }
 
-    // Actualizar el stock de un perfume después de la venta
-    private void actualizarStock(Integer perfumeId, int cantidadVendida) {
-        Producto productoModel = productoRepository.findById(perfumeId)
-                .orElseThrow(() -> new RuntimeException("Perfume no encontrado"));
-        int nuevoStock = productoModel.getStock() - cantidadVendida;
-
-        if (nuevoStock < 0) {
-            throw new RuntimeException("No hay suficiente stock para el perfume: " + productoModel.getNombre());
-        }
-
-        productoModel.setStock(nuevoStock);
-        productoRepository.save(productoModel);  // Guardamos el perfume actualizado
-    }
 
 }
