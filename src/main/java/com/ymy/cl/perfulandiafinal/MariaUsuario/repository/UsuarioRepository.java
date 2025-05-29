@@ -1,6 +1,6 @@
 package com.ymy.cl.perfulandiafinal.MariaUsuario.repository;
 
-import com.ymy.cl.perfulandiafs.usuario.model.Usuario;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

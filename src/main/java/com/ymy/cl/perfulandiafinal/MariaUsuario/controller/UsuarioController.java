@@ -1,7 +1,7 @@
 package com.ymy.cl.perfulandiafinal.MariaUsuario.controller;
 
-import com.ymy.cl.perfulandiafs.usuario.model.Usuario;
-import com.ymy.cl.perfulandiafs.usuario.service.UsuarioService;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -25,7 +25,7 @@ public class ProductoService {
 
     public String delete(Integer id) {
         productoRepository.deleteById(id);
-        return "Perfume eliminado con éxito";
+        return "Producto eliminado con éxito";
     }
 
     public String updateStock(Integer id, int cantidadVendida) {
@@ -33,7 +33,7 @@ public class ProductoService {
         int nuevoStock = producto.getStock() - cantidadVendida;
 
         if (nuevoStock < 0) {
-            throw new RuntimeException("No hay suficiente stock para el perfume: " + producto.getNombre());
+            throw new RuntimeException("No hay suficiente stock de producto: " + producto.getNombre());
         }
 
         producto.setStock(nuevoStock);

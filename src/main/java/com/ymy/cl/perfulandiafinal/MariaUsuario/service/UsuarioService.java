@@ -1,7 +1,7 @@
 package com.ymy.cl.perfulandiafinal.MariaUsuario.service;
 
-import com.ymy.cl.perfulandiafs.usuario.model.Usuario;
-import com.ymy.cl.perfulandiafs.usuario.repository.UsuarioRepository;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
+import com.ymy.cl.perfulandiafinal.MariaUsuario.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
