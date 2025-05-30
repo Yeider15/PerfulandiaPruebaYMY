@@ -23,6 +23,5 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
             "FROM DetalleVenta d JOIN d.productoModel p WHERE d.venta.id = :ventaId")
     List<DetalleVentaQueryDTO> findDetallesDeVenta(@Param("ventaId") Long ventaId);
 
-    // Metodo para obtener ventas por estado
     List<Venta> findByEstado(String estado);
 }

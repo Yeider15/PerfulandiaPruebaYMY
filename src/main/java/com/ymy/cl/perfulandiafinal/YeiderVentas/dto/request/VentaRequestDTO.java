@@ -8,6 +8,6 @@ public class VentaRequestDTO {
     private Long id;
     private String estado;
     private Double total;
-    private Long usuarioId; // ID del usuario que realiza la venta
+    private Long usuarioId;
     private List<DetalleVentaRequestDTO> detallesVenta; // Lista de detalles de venta
 }

@@ -35,7 +35,7 @@ public class VentaService {
     @Autowired
     private ProductoService productoService;
 
-    // Método para crear una venta
+    // Metodo para crear una venta
     @Transactional
     public String crearVenta(VentaRequestDTO ventaRequestDTO) {
         // Obtener el usuario que realizó la venta
@@ -82,7 +82,7 @@ public class VentaService {
 
 
 
-    // Método para obtener todas las ventas
+    // Metodo para obtener todas las ventas
     public List<VentaDTO> findAllVentas() {
         List<VentaDTO> ventasDTO = new ArrayList<>();
         List<Venta> ventas = ventaRepository.findAll(); // Obtener todas las ventas
@@ -94,14 +94,14 @@ public class VentaService {
         return ventasDTO;
     }
 
-    // Método para obtener una venta por su ID
+    // Metodo para obtener una venta por su ID
     public VentaDTO findVentaById(Long id) {
         Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
         return new VentaDTO(venta); // Convertir la entidad Venta a DTO
     }
 
-    // Método para actualizar el estado de una venta
+    // Metodo para actualizar el estado de una venta
     public String actualizarEstado(Long id, String estado) {
         Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada"));
@@ -110,7 +110,7 @@ public class VentaService {
         return "Estado de la venta actualizado con éxito";
     }
 
-    // Método para obtener ventas por estado
+    // Metodo para obtener ventas por estado
     public List<VentaDTO> findVentasByEstado(String estado) {
         List<Venta> ventas = ventaRepository.findByEstado(estado); // Buscar ventas por estado
         List<VentaDTO> ventasDTO = new ArrayList<>();
@@ -122,7 +122,7 @@ public class VentaService {
         return ventasDTO;
     }
 
-    // Método para eliminar una venta por su ID
+    // Metodo para eliminar una venta por su ID
     public String eliminarVenta(Long id) {
         Venta venta = ventaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Venta no encontrada"));

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class DetalleVentaRequestDTO {
-    private Long productoId; // ID del producto
-    private Integer cantidad; // Cantidad de productos vendidos
-    private Double precioUnitario; // Precio unitario del producto
+    private Long productoId;
+    private Integer cantidad;
+    private Double precioUnitario;
 }

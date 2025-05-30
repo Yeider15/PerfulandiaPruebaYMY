@@ -15,15 +15,15 @@ public class VentaDTO {
     private Date fechaVenta;
     private Double total;
     private String estado;
-    private String usuarioNombre;  // Nombre del usuario que realizó la venta
-    private List<DetalleVentaDTO> detalleVentas = new ArrayList<>();  // Lista de detalles de la venta
+    private String usuarioNombre;
+    private List<DetalleVentaDTO> detalleVentas = new ArrayList<>();
 
     public VentaDTO(Venta venta) {
         this.id = venta.getId();
         this.fechaVenta = venta.getFechaVenta();
         this.total = venta.getTotal();
         this.estado = venta.getEstado();
-        this.usuarioNombre = venta.getUsuario().getNombre();  // Suponiendo que la entidad Usuario tiene un método `getNombre()`
+        this.usuarioNombre = venta.getUsuario().getNombre();
 
         // Convertir los detalles de venta a DTOs
         if (venta.getDetalleVentas() != null) {
