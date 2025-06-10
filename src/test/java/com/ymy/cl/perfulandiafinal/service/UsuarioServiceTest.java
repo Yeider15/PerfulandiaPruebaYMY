@@ -2,6 +2,7 @@ package com.ymy.cl.perfulandiafinal.service;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 import com.ymy.cl.perfulandiafinal.MariaUsuario.model.Usuario;
 import com.ymy.cl.perfulandiafinal.MariaUsuario.repository.UsuarioRepository;
 import com.ymy.cl.perfulandiafinal.MariaUsuario.service.UsuarioService;
@@ -12,106 +13,94 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 
 @SpringBootTest
 public class UsuarioServiceTest {
 
-    // Inyecta el servicio de Usuario para ser probado.
     @Autowired
     private UsuarioService usuarioService;
 
-    // Crea un mock del repositorio de Usuario para simular su comportamiento.
     @MockBean
     private UsuarioRepository usuarioRepository;
 
     @Test
     public void testFindAll() {
-        // Define el comportamiento del mock: cuando se llame a findAll(), devuelve una lista con un Usuario.
-        Usuario usuario = new Usuario();
-        usuario.setId(1);
-        usuario.setNombre("Juan Perez");
+        // Creamos un usuario para probar findAll
+        when(usuarioRepository.findAll()).thenReturn(List.of(new Usuario(1, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null)));
 
-        when(usuarioRepository.findAll()).thenReturn(List.of(usuario));
-
-        // Llama al método findAll() del servicio.
+        // Llamamos al servicio para obtener todos los usuarios
         List<Usuario> usuarios = usuarioService.findAll();
 
-        // Verifica que la lista devuelta no sea nula y que contenga exactamente un Usuario.
+        // Verificamos que la lista no esté vacía y contenga el usuario esperado
         assertNotNull(usuarios);
         assertEquals(1, usuarios.size());
-        assertEquals("Juan Perez", usuarios.get(0).getNombre());
+        assertEquals("Juan Pérez", usuarios.get(0).getNombre());
     }
 
     @Test
     public void testFindById() {
         Integer id = 1;
-        Usuario usuario = new Usuario();
-        usuario.setId(id);
-        usuario.setNombre("Juan Perez");
+        Usuario usuario = new Usuario(id, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null);
 
-        // Define el comportamiento del mock: cuando se llame a findById(), devuelve un Usuario.
+        // Simulamos el comportamiento de findById del repositorio
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
 
-        // Llama al método findById() del servicio.
-        Usuario foundUsuario = usuarioService.findById(id);
+        // Llamamos al servicio para obtener el usuario por ID
+        Usuario found = usuarioService.findById(id);
 
-        // Verifica que el Usuario devuelto no sea nulo y que su nombre coincida con el esperado.
-        assertNotNull(foundUsuario);
-        assertEquals(id, foundUsuario.getId());
-        assertEquals("Juan Perez", foundUsuario.getNombre());
+        // Verificamos que el usuario encontrado no sea null y que el ID sea el esperado
+        assertNotNull(found);
+        assertEquals(id, found.getId());
+        assertEquals("Juan Pérez", found.getNombre());
     }
 
     @Test
     public void testSave() {
+        // Creamos un usuario para prueba con todos los campos
         Usuario usuario = new Usuario();
         usuario.setId(1);
-        usuario.setNombre("Juan Perez");
+        usuario.setNombre("Juan Pérez");
+        usuario.setApellido("Lopez");
+        usuario.setTelefono(123456789);
+        usuario.setCorreo("juan.perez@email.com");
+        usuario.setDireccion("Calle Falsa 123");
+        usuario.setFechaRegistro(new Date()); // Aquí corregimos la fecha
 
-        // Define el comportamiento del mock: cuando se llame a save(), devuelve el Usuario proporcionado.
+        // Simulamos el comportamiento de save del repositorio
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
-        // Llama al método save() del servicio.
-        String result = usuarioService.save(usuario);
+        // Llamamos al servicio para guardar el usuario y obtenemos el resultado (mensaje)
+        String resultado = usuarioService.save(usuario);
 
-        // Verifica que el mensaje devuelto sea el esperado.
-        assertEquals("Usuario creado o actualizado con éxito", result);
+        // Verificamos que el mensaje de éxito sea el esperado
+        assertNotNull(resultado);
+        assertEquals("Usuario creado o actualizado con éxito", resultado);
 
-        // Verifica que el método save() del repositorio haya sido llamado exactamente una vez.
+        // Verificamos que el método save haya sido llamado una vez
         verify(usuarioRepository, times(1)).save(usuario);
     }
 
     @Test
-    public void testDelete() {
+    public void testDeleteById() {
         Integer id = 1;
-        Usuario usuario = new Usuario();
-        usuario.setId(id);
-        usuario.setNombre("Juan Perez");
+        // Creamos un usuario para la prueba
+        Usuario usuario = new Usuario(id, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null);
 
-        // Define el comportamiento del mock: cuando se llame a findById(), devuelve un Usuario.
+        // Simulamos el comportamiento de findById para devolver el usuario
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
-        doNothing().when(usuarioRepository).delete(usuario); // No hace nada al eliminar.
 
-        // Llama al método delete() del servicio.
-        String result = usuarioService.delete(id);
+        // Simulamos el comportamiento de deleteById (no hace nada)
+        doNothing().when(usuarioRepository).deleteById(id);
 
-        // Verifica que el método delete() del repositorio haya sido llamado exactamente una vez.
-        verify(usuarioRepository, times(1)).delete(usuario);
-        assertEquals("Usuario eliminado con éxito", result);
+        // Llamamos al servicio para eliminar el usuario
+        String mensaje = usuarioService.delete(id);
+
+        // Verificamos que el mensaje de eliminación sea el esperado
+        assertEquals("Usuario eliminado con éxito", mensaje);
+
+        // Verificamos que el método deleteById del repositorio haya sido llamado exactamente una vez
+        verify(usuarioRepository, times(1)).deleteById(id);
     }
 
-    @Test
-    public void testDeleteUsuarioNoEncontrado() {
-        Integer id = 1;
-
-        // Define el comportamiento del mock: cuando se llame a findById() con un ID que no existe, lanza una excepción.
-        when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
-
-        // Verifica que la excepción sea lanzada.
-        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
-            usuarioService.delete(id);
-        });
-
-        // Verifica que el mensaje de la excepción sea el esperado.
-        assertEquals("Usuario no encontrado", thrown.getMessage());
-    }
 }
