@@ -38,9 +38,11 @@ public class VentaService {
     // Metodo para crear una venta
     @Transactional
     public String crearVenta(VentaRequestDTO ventaRequestDTO) {
-        // Obtener el usuario que realizó la venta
-        Usuario usuario = usuarioService.findById(ventaRequestDTO.getUsuarioId().intValue()); // Aseguramos que sea Integer
+        // Convertimos Long a Integer para el id del usuario
+        Integer usuarioId = ventaRequestDTO.getUsuarioId().intValue();  // Conversion de Long a Integer
 
+        // Obtener el usuario que realizó la venta
+        Usuario usuario = usuarioService.findById(usuarioId);  // Ahora pasamos Integer
         // Crear la instancia de Venta
         Venta venta = new Venta();
         venta.setFechaVenta(new Date());

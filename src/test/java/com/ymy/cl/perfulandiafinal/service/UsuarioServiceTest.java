@@ -26,13 +26,10 @@ public class UsuarioServiceTest {
 
     @Test
     public void testFindAll() {
-        // Creamos un usuario para probar findAll
         when(usuarioRepository.findAll()).thenReturn(List.of(new Usuario(1, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null)));
 
-        // Llamamos al servicio para obtener todos los usuarios
         List<Usuario> usuarios = usuarioService.findAll();
 
-        // Verificamos que la lista no esté vacía y contenga el usuario esperado
         assertNotNull(usuarios);
         assertEquals(1, usuarios.size());
         assertEquals("Juan Pérez", usuarios.get(0).getNombre());
@@ -43,13 +40,10 @@ public class UsuarioServiceTest {
         Integer id = 1;
         Usuario usuario = new Usuario(id, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null);
 
-        // Simulamos el comportamiento de findById del repositorio
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
 
-        // Llamamos al servicio para obtener el usuario por ID
         Usuario found = usuarioService.findById(id);
 
-        // Verificamos que el usuario encontrado no sea null y que el ID sea el esperado
         assertNotNull(found);
         assertEquals(id, found.getId());
         assertEquals("Juan Pérez", found.getNombre());
@@ -57,7 +51,6 @@ public class UsuarioServiceTest {
 
     @Test
     public void testSave() {
-        // Creamos un usuario para prueba con todos los campos
         Usuario usuario = new Usuario();
         usuario.setId(1);
         usuario.setNombre("Juan Pérez");
@@ -65,33 +58,28 @@ public class UsuarioServiceTest {
         usuario.setTelefono(123456789);
         usuario.setCorreo("juan.perez@email.com");
         usuario.setDireccion("Calle Falsa 123");
-        usuario.setFechaRegistro(new Date()); // Aquí corregimos la fecha
+        usuario.setFechaRegistro(new Date());
 
-        // Simulamos el comportamiento de save del repositorio
         when(usuarioRepository.save(usuario)).thenReturn(usuario);
 
-        // Llamamos al servicio para guardar el usuario y obtenemos el resultado (mensaje)
         String resultado = usuarioService.save(usuario);
 
-        // Verificamos que el mensaje de éxito sea el esperado
         assertNotNull(resultado);
         assertEquals("Usuario creado o actualizado con éxito", resultado);
 
-        // Verificamos que el método save haya sido llamado una vez
         verify(usuarioRepository, times(1)).save(usuario);
     }
 
     @Test
     public void testDeleteById() {
         Integer id = 1;
-        // Creamos un usuario para la prueba
         Usuario usuario = new Usuario(id, "Juan Pérez", "Lopez", 123456789, "juan.perez@email.com", "Calle Falsa 123", new Date(), null);
 
-        // Simulamos el comportamiento de findById para devolver el usuario
+        // Simula que el repositorio devuelve el usuario al buscarlo
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuario));
 
-        // Simulamos el comportamiento de deleteById (no hace nada)
-        doNothing().when(usuarioRepository).deleteById(id);
+        // Simula que el repositorio elimina el usuario pasando el objeto completo
+        doNothing().when(usuarioRepository).delete(usuario);  // Usamos delete() en lugar de deleteById
 
         // Llamamos al servicio para eliminar el usuario
         String mensaje = usuarioService.delete(id);
@@ -99,8 +87,22 @@ public class UsuarioServiceTest {
         // Verificamos que el mensaje de eliminación sea el esperado
         assertEquals("Usuario eliminado con éxito", mensaje);
 
-        // Verificamos que el método deleteById del repositorio haya sido llamado exactamente una vez
-        verify(usuarioRepository, times(1)).deleteById(id);
+        // Verificamos que el método delete haya sido llamado exactamente una vez con el objeto usuario
+        verify(usuarioRepository, times(1)).delete(usuario);
+
+        // Caso 2: El usuario no existe
+        when(usuarioRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Llamamos al servicio para intentar eliminar un usuario no existente
+        Exception exception = assertThrows(RuntimeException.class, () -> usuarioService.delete(id));
+
+        // Verificamos que la excepción haya sido lanzada con el mensaje esperado
+        assertEquals("Usuario no encontrado", exception.getMessage());
+
+        // Verificamos que el método delete no haya sido llamado en este caso
+        verify(usuarioRepository, times(1)).delete(usuario);
     }
+
+
 
 }

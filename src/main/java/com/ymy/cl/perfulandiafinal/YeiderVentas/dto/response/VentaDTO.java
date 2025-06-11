@@ -2,13 +2,17 @@ package com.ymy.cl.perfulandiafinal.YeiderVentas.dto.response;
 
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.DetalleVenta;
 import com.ymy.cl.perfulandiafinal.YeiderVentas.model.Venta;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class VentaDTO {
 
     private Long id;
