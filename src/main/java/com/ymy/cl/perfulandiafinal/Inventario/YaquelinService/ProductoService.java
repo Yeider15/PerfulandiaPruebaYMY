@@ -42,4 +42,16 @@ public class ProductoService {
         productoRepository.save(producto);
         return "Stock actualizado con éxito para el producto: " + producto.getNombre();
     }
+
+    public Producto saveAndReturn(Producto producto) {
+        return productoRepository.save(producto);
+    }
+
+
+
+
+
+
+
+
 }
